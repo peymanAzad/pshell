@@ -11,6 +11,9 @@ void test_dqoutes();
 void test_words();
 void test_mixed();
 
+void test_buff_alloc();
+void test_buffer_push();
+
 int main() {
     test_whitespaces();
     test_pipes();
@@ -24,4 +27,7 @@ int main() {
     test_dqoutes();
     test_words();
     test_mixed();
+
+    test_buff_alloc();
+    test_buffer_push();
 }

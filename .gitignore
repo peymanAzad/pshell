@@ -1,3 +1,5 @@
 *.o
 *.gch
+*.d
 pshell
+test

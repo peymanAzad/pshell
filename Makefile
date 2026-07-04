@@ -1,4 +1,29 @@
-CFLAGS=-Wall -Wextra -Werror -std=c11 -pedantic -ggdb
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -std=c11 -pedantic -ggdb -MMD -MP
+LIBOBJS = tokenizer.o
+PSHELLOBJS = main.o $(LIBOBJS)
+TESTOBJS = tests/main.o tests/tokenizer.test.o $(LIBOBJS)
 
-pshell: pshell.h main.c tokenizer.c
-	$(CC) $(CFLAGS) -o pshell main.c tokenizer.c
+.PHONY: all clean
+
+all: pshell
+
+pshell: $(PSHELLOBJS)
+	$(CC) $(CFLAGS) -o $@ $^
+
+test: $(TESTOBJS)
+	$(CC) $(CFLAGS) -o $@ $^
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+tests/%.o: tests/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f \
+		pshell test \
+		$(PSHELLOBJS) $(TESTOBJS) \
+		$(PSHELLOBJS:.o=.d) $(TESTOBJS:.o=.d)
+
+-include $(PSHELLOBJS:.o=.d) $(TESTOBJS:.o=.d)

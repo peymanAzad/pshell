@@ -6,21 +6,21 @@
 #define MAX_WORD_LEN 16
 
 typedef enum TokenType {
-  word,
-  qoute,
-  dqoute,
-  gt,
-  dgt,
-  lt,
-  andd,
-  pipe,
-  backslash,
-  newline
+    word,
+    qoute,
+    dqoute,
+    gt,
+    dgt,
+    lt,
+    andd,
+    pipe,
+    backslash,
+    newline
 } TokenType;
 
 typedef struct Token {
-  TokenType type;
-  char *value;
+    TokenType type;
+    char *value;
 } Token;
 
 int tokenize(Token *result, char *input, size_t count);

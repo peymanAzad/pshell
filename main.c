@@ -3,20 +3,21 @@
 #define MAX 128
 
 int main(int argc, char **argv) {
-  printf("argc is %d\n", argc);
-  --argc;
-  ++argv;
-  while (--argc >= 0) {
-    Token tokens[MAX];
-    char *test = *argv;
-    while (*test != '\0')
-      putchar(*test++);
-    printf("after\n");
-    int count = tokenize(tokens, *argv++, MAX);
-    for (int i = 0; i < count; ++i) {
-      printf("token[%d]: %d -> %s\n", i + 1, tokens[i].type, tokens[i].value);
+    printf("argc is %d\n", argc);
+    --argc;
+    ++argv;
+    while (--argc >= 0) {
+        Token tokens[MAX];
+        char *test = *argv;
+        while (*test != '\0')
+            putchar(*test++);
+        printf("after\n");
+        int count = tokenize(tokens, *argv++, MAX);
+        for (int i = 0; i < count; ++i) {
+            printf("token[%d]: %d -> %s\n", i + 1, tokens[i].type,
+                   tokens[i].value);
+        }
+        printf("****\n");
     }
-    printf("****\n");
-  }
-  return 0;
+    return 0;
 }

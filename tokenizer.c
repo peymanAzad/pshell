@@ -9,12 +9,12 @@ int get_to_char(Buffer *b, char *input, char ch) {
     char c;
     int wcount = 0;
     for (wcount = 0; (c = *input++) != '\0'; ++wcount) {
-        int count = pushcbuf(b, c);
-        assert(count == 1);
         if (c == ch) {
             ++wcount;
             break;
         }
+        int count = pushcbuf(b, c);
+        assert(count == 1);
     }
     return wcount;
 }
@@ -60,10 +60,10 @@ size_t next_token(Token *token, char *input, size_t cursor) {
 
             Buffer *tokenval = allocbuf();
             do {
-                pushcbuf(tokenval, c);
-                if (c == '\'' || c == '"') {
+                if (c == '\'' || c == '"')
                     cursor += get_to_char(tokenval, input + cursor, c);
-                }
+                else
+                    pushcbuf(tokenval, c);
             } while ((c = input[cursor++]) != '\0' && !isspace(c));
             *token = (Token){.type = word, .value = tokenval};
             return cursor - 1;

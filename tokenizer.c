@@ -1,113 +1,82 @@
 #include "pshell.h"
+#include <assert.h>
 #include <ctype.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-int get_to_char(char *tokenval, char *input, char ch, int max_len) {
-    int wcount;
+int get_to_char(Buffer *b, char *input, char ch) {
     char c;
-    for (wcount = 0; (c = *input++) != '\0' && c != EOF && c != ch; ++wcount) {
-        if (wcount < max_len)
-            tokenval[wcount] = c;
+    int wcount = 0;
+    for (wcount = 0; (c = *input++) != '\0'; ++wcount) {
+        int count = pushcbuf(b, c);
+        assert(count == 1);
+        if (c == ch) {
+            ++wcount;
+            break;
+        }
     }
-    tokenval[wcount] = '\0';
-    if (c == ch)
-        ++wcount;
     return wcount;
 }
 
-int tokenize(Token *result, char *input, size_t count) {
+size_t next_token(Token *token, char *input, size_t cursor) {
     char c;
-    size_t cursor = 0;
-    size_t tcount;
-    int wcount;
-    char *tokenval;
-    for (tcount = 0; (c = *input++) != '\0' && c != EOF && tcount < count;) {
+    while ((c = input[cursor++]) != '\0') {
         switch (c) {
         case '\n':
-            result[cursor++] = (Token){.type = newline, .value = NULL};
-            ++tcount;
-            break;
+            *token = (Token){.type = newline, .value = NULL};
+            return cursor;
 
         case '|':
-            result[cursor++] = (Token){.type = pipe, .value = NULL};
-            ++tcount;
-            break;
+            *token = (Token){.type = pipe, .value = NULL};
+            return cursor;
 
         case '<':
-            result[cursor++] = (Token){.type = lt, .value = NULL};
-            ++tcount;
-            break;
+            *token = (Token){.type = lt, .value = NULL};
+            return cursor;
 
         case '>':
-            if (*(input) == '>') {
-                result[cursor++] = (Token){.type = dgt, .value = NULL};
-                ++input;
+            if (input[cursor] == '>') {
+                *token = (Token){.type = dgt, .value = NULL};
+                ++cursor;
             } else
-                result[cursor++] = (Token){.type = gt, .value = NULL};
-            ++tcount;
-            break;
+                *token = (Token){.type = gt, .value = NULL};
+            return cursor;
 
         case '&':
-            if (*(input) == '&') {
-                result[cursor++] = (Token){.type = andd, .value = NULL};
-                ++tcount;
-                ++input;
+            if (input[cursor] == '&') {
+                *token = (Token){.type = andd, .value = NULL};
+                return ++cursor;
             }
             break;
 
         case '\\':
-            result[cursor++] = (Token){.type = backslash, .value = NULL};
-            ++tcount;
-            break;
-
-        case '\'':
-            tokenval = (char *)malloc(MAX_WORD_LEN + 1);
-            wcount = get_to_char(tokenval, input, '\'', MAX_WORD_LEN);
-            if (wcount == 0) {
-                free(tokenval);
-                tokenval = NULL;
-            }
-            input += wcount;
-            result[cursor++] = (Token){.type = qoute, .value = tokenval};
-            ++tcount;
-            break;
-
-        case '"':
-            tokenval = (char *)malloc(MAX_WORD_LEN + 1);
-            wcount = get_to_char(tokenval, input, '"', MAX_WORD_LEN);
-            if (wcount == 0) {
-                free(tokenval);
-                tokenval = NULL;
-            }
-            input += wcount;
-            result[cursor++] = (Token){.type = dqoute, .value = tokenval};
-            ++tcount;
-            break;
+            *token = (Token){.type = backslash, .value = NULL};
+            return cursor;
 
         default:
             if (isspace(c))
                 continue;
 
-            tokenval = (char *)malloc(MAX_WORD_LEN + 1);
-            wcount = 0;
+            Buffer *tokenval = allocbuf();
             do {
-                if (wcount < MAX_WORD_LEN)
-                    tokenval[wcount++] = c;
+                pushcbuf(tokenval, c);
                 if (c == '\'' || c == '"') {
-                    int qcount = get_to_char(tokenval + wcount, input, c,
-                                             MAX_WORD_LEN - wcount - 1);
-                    input += qcount;
-                    wcount += qcount;
-                    tokenval[wcount - 1] = c;
+                    cursor += get_to_char(tokenval, input + cursor, c);
                 }
-            } while ((c = *input++) != '\0' && c != EOF && !isspace(c));
-            tokenval[wcount] = '\0';
-            result[cursor++] = (Token){.type = word, .value = tokenval};
-            ++tcount;
-            --input;
+            } while ((c = input[cursor++]) != '\0' && !isspace(c));
+            *token = (Token){.type = word, .value = tokenval};
+            return cursor - 1;
         }
     }
-    return tcount;
+    return 0;
+}
+
+int tokenize_all(Token *result, char *input) {
+    size_t cursor = 0;
+    int count;
+    for (count = 0; (cursor = next_token(result++, input, cursor)) != 0;
+         ++count)
+        ;
+    return count;
 }

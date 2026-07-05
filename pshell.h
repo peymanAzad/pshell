@@ -19,21 +19,23 @@ typedef enum TokenType {
     newline
 } TokenType;
 
-typedef struct Token {
-    TokenType type;
-    char *value;
-} Token;
-
 typedef struct Buffer {
     char *data;
     size_t len;
     size_t cap;
 } Buffer;
 
+typedef struct Token {
+    TokenType type;
+    Buffer *value;
+} Token;
+
 int pushbuf(Buffer *buff, char *data);
 int pushcbuf(Buffer *buff, char c);
 Buffer *allocbuf();
 
-int tokenize(Token *result, char *input, size_t count);
+size_t next_token(Token *token, char *input, size_t cursor);
+int tokenize_all(Token *tokens, char *input);
+
 
 #endif

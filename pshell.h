@@ -31,6 +31,7 @@ typedef struct Buffer {
 } Buffer;
 
 int pushbuf(Buffer *buff, char *data);
+int pushcbuf(Buffer *buff, char c);
 Buffer *allocbuf();
 
 int tokenize(Token *result, char *input, size_t count);

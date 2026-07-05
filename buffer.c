@@ -18,6 +18,18 @@ int pushbuf(Buffer *buff, char *data) {
     return dlen;
 }
 
+int pushcbuf(Buffer *buff, char c) {
+    if (buff->len + 1 >= buff->cap) {
+        buff->data = (char *)realloc(buff->data, buff->cap + BUFF_SIZE);
+        if (buff->data == NULL)
+            return -1;
+        buff->cap += BUFF_SIZE;
+    }
+    buff->data[buff->len++] = c;
+    buff->data[buff->len] = '\0';
+    return 1;
+}
+
 Buffer *allocbuf() {
     Buffer *b = malloc(sizeof(Buffer));
     if (b == NULL)

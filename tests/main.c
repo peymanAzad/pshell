@@ -13,6 +13,7 @@ void test_mixed();
 
 void test_buff_alloc();
 void test_buffer_push();
+void test_buffer_pushc();
 
 int main() {
     test_whitespaces();
@@ -30,4 +31,5 @@ int main() {
 
     test_buff_alloc();
     test_buffer_push();
+    test_buffer_pushc();
 }

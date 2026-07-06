@@ -8,14 +8,11 @@
 
 typedef enum TokenType {
     word,
-    qoute,
-    dqoute,
     gt,
     dgt,
     lt,
     andd,
     pipe,
-    backslash,
     newline
 } TokenType;
 

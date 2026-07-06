@@ -58,13 +58,9 @@ void test_backslashes() {
     static char *name = "Backslash";
     Token tokens[3];
     int c = tokenize_all(tokens, "\\");
-    assert(c == 1);
-    assert(tokens[0].type == backslash);
-    assert(tokens[0].value == NULL);
-    c = tokenize_all(tokens, "\\\\ \\");
-    assert(c == 3);
-    for (int i = 0; i < 3; ++i)
-        assert(tokens[i].type == backslash && tokens[i].value == NULL);
+    assert(c == 0);
+    c = tokenize_all(tokens, "\\\n \\\n\\\n\\ \\\n\\");
+    assert(c == 0);
     printf("%10s/%-15s: test passed successfully.\n", module, name);
 }
 
@@ -135,11 +131,11 @@ void test_dqoutes() {
     assert(c == 1);
     assert(tokens[0].type == word);
     assert(strcmp(tokens[0].value->data, "") == 0);
-    c = tokenize_all(tokens, "\"test1\" \"test2\" \" \"");
+    c = tokenize_all(tokens, "abc\"test1\"def \"test2\" \" \"");
     assert(c == 3);
     for (int i = 0; i < 2; ++i)
         assert(tokens[i].type == word);
-    assert(strcmp(tokens[0].value->data, "test1") == 0);
+    assert(strcmp(tokens[0].value->data, "abctest1def") == 0);
     assert(strcmp(tokens[1].value->data, "test2") == 0);
     assert(strcmp(tokens[2].value->data, " ") == 0);
     printf("%10s/%-15s: test passed successfully.\n", module, name);
@@ -164,24 +160,23 @@ void test_words() {
 
 void test_mixed() {
     static char *name = "Mixed";
-    Token tokens[12];
-    int c = tokenize_all(tokens,
-                         "test -t=\"{arg1}\" \\ ls . && cp >> test.txt < d |");
-    assert(c == 12);
+    Token tokens[11];
+    int c = tokenize_all(
+        tokens, "test -t=\"{arg1}\" \\\n ls . && cp >> test.txt < d |");
+    assert(c == 11);
     assert(tokens[0].type == word &&
            strcmp(tokens[0].value->data, "test") == 0);
     assert(tokens[1].type == word &&
            strcmp(tokens[1].value->data, "-t={arg1}") == 0);
-    assert(tokens[2].type == backslash && tokens[2].value == NULL);
-    assert(tokens[3].type == word && strcmp(tokens[3].value->data, "ls") == 0);
-    assert(tokens[4].type == word && strcmp(tokens[4].value->data, ".") == 0);
-    assert(tokens[5].type == andd && tokens[5].value == NULL);
-    assert(tokens[6].type == word && strcmp(tokens[6].value->data, "cp") == 0);
-    assert(tokens[7].type == dgt && tokens[7].value == NULL);
-    assert(tokens[8].type == word &&
-           strcmp(tokens[8].value->data, "test.txt") == 0);
-    assert(tokens[9].type == lt && tokens[9].value == NULL);
-    assert(tokens[10].type == word && strcmp(tokens[10].value->data, "d") == 0);
-    assert(tokens[11].type == pipe && tokens[11].value == NULL);
+    assert(tokens[2].type == word && strcmp(tokens[2].value->data, "ls") == 0);
+    assert(tokens[3].type == word && strcmp(tokens[3].value->data, ".") == 0);
+    assert(tokens[4].type == andd && tokens[4].value == NULL);
+    assert(tokens[5].type == word && strcmp(tokens[5].value->data, "cp") == 0);
+    assert(tokens[6].type == dgt && tokens[6].value == NULL);
+    assert(tokens[7].type == word &&
+           strcmp(tokens[7].value->data, "test.txt") == 0);
+    assert(tokens[8].type == lt && tokens[8].value == NULL);
+    assert(tokens[9].type == word && strcmp(tokens[9].value->data, "d") == 0);
+    assert(tokens[10].type == pipe && tokens[10].value == NULL);
     printf("%10s/%-15s: test passed successfully.\n", module, name);
 }

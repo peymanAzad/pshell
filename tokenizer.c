@@ -51,8 +51,9 @@ size_t next_token(Token *token, char *input, size_t cursor) {
             break;
 
         case '\\':
-            *token = (Token){.type = backslash, .value = NULL};
-            return cursor;
+            if (input[cursor] == '\n')
+                ++cursor;
+            break;
 
         default:
             if (isspace(c))

@@ -12,10 +12,10 @@ int main(int argc, char **argv) {
         while (*test != '\0')
             putchar(*test++);
         printf("after\n");
-        int count = tokenize(tokens, *argv++, MAX);
+        int count = tokenize_all(tokens, *argv++);
         for (int i = 0; i < count; ++i) {
             printf("token[%d]: %d -> %s\n", i + 1, tokens[i].type,
-                   tokens[i].value);
+                   tokens[i].value->data);
         }
         printf("****\n");
     }

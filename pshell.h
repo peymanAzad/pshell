@@ -45,15 +45,17 @@ int tokenize_all(Token *tokens, char *input);
  * Parser
  *====================================================*/
 typedef enum SyntaxType {
-    script, statement, command, assignment, andor, pipeline
+    script, statement, command, assignment, redirects, pipeline
 } SyntaxType;
 
 typedef struct SyntaxNode {
     SyntaxType type;
+    TokenType ttype;  //only used for redirect value: gt, dgt, lt
     Buffer *value;
     struct SyntaxNode *suffixes;
     struct SyntaxNode *prefixes;
     struct SyntaxNode *redirects;
+    struct SyntaxNode *commands;
     struct SyntaxNode *next;
 } SyntaxNode;
 #endif

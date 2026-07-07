@@ -42,14 +42,16 @@ void test_ands() {
 
 void test_newlines() {
     static char *name = "Newline";
-    Token tokens[3];
+    Token tokens[6];
     int c = tokenize_all(tokens, "\n");
+    assert(c == 1);
+    c = tokenize_all(tokens, ";");
     assert(c == 1);
     assert(tokens[0].type == newline);
     assert(tokens[0].value == NULL);
-    c = tokenize_all(tokens, "\n \n\n");
-    assert(c == 3);
-    for (int i = 0; i < 3; ++i)
+    c = tokenize_all(tokens, "\n; ;; \n\n");
+    assert(c == 6);
+    for (int i = 0; i < 6; ++i)
         assert(tokens[i].type == newline && tokens[i].value == NULL);
     printf("%10s/%-15s: test passed successfully.\n", module, name);
 }

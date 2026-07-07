@@ -23,6 +23,7 @@ size_t next_token(Token *token, char *input, size_t cursor) {
     char c;
     while ((c = input[cursor++]) != '\0') {
         switch (c) {
+        case ';':
         case '\n':
             *token = (Token){.type = newline, .value = NULL};
             return cursor;

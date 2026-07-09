@@ -18,13 +18,12 @@ typedef struct Buffer {
 } Buffer;
 
 Buffer *allocbuf();
+Buffer *initbuf(char *data);
 void freebuf(Buffer *);
 int pushbuf(Buffer *buff, char *data);
 int pushcbuf(Buffer *buff, char c);
 Buffer* buffstrtok(Buffer *buff, char c, size_t *cursor);
 Buffer* buffstrtokspace(Buffer *buff, size_t *cursor);
-Buffer *allocbuf();
-Buffer *initbuf(char *data);
 
 /*====================================================
  * Tokenizer
@@ -44,6 +43,8 @@ typedef struct Token {
     Buffer *value;
 } Token;
 
+Token *alloc_token();
+void free_token(Token *t);
 size_t next_token(Token *token, char *input, size_t cursor);
 int tokenize_all(Token *tokens, char *input);
 

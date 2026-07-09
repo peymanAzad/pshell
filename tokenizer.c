@@ -5,6 +5,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+Token *alloc_token() {
+    Token *t = (Token *)malloc(sizeof(Token));
+    assert(t != NULL);
+    return t;
+}
+
+void free_token(Token *t) {
+    if (t->value)
+        freebuf(t->value);
+    free(t);
+}
+
 int get_to_char(Buffer *b, char *input, char ch) {
     char c;
     int wcount = 0;

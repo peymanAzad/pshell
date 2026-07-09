@@ -14,6 +14,8 @@ void test_mixed();
 void test_buff_alloc();
 void test_buffer_push();
 void test_buffer_pushc();
+void test_buffer_strtok();
+void test_buffer_strtokspace();
 
 int main() {
     test_whitespaces();
@@ -32,4 +34,6 @@ int main() {
     test_buff_alloc();
     test_buffer_push();
     test_buffer_pushc();
+    test_buffer_strtok();
+    test_buffer_strtokspace();
 }

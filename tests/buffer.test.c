@@ -42,3 +42,45 @@ void test_buffer_pushc() {
     free(b);
     printf("%10s/%-15s: test passed successfully.\n", module, name);
 }
+
+void test_buffer_strtok() {
+    static char *name = "buffstrtok";
+    char *str = "=hello=world=foo==";
+    size_t cursor = 0;
+    Buffer *b = initbuf("=");
+    assert(buffstrtok(b, '=', &cursor) == NULL);
+    free(b);
+    cursor = 0;
+    b = initbuf(str);
+    assert(b->len == 18);
+    for (int i = 0; i < 3; ++i) {
+        Buffer *s = buffstrtok(b, '=', &cursor);
+        assert(strcmp(s->data, i == 0   ? "hello"
+                               : i == 1 ? "world"
+                                        : "foo") == 0);
+        free(s);
+    }
+    free(b);
+    printf("%10s/%-15s: test passed successfully.\n", module, name);
+}
+
+void test_buffer_strtokspace() {
+    static char *name = "buffstrtokspace";
+    char *str = " hello  \t  world foo  ";
+    size_t cursor = 0;
+    Buffer *b = initbuf(" ");
+    assert(buffstrtokspace(b, &cursor) == NULL);
+    free(b);
+    cursor = 0;
+    b = initbuf(str);
+    assert(b->len == 22);
+    for (int i = 0; i < 3; ++i) {
+        Buffer *s = buffstrtokspace(b, &cursor);
+        assert(strcmp(s->data, i == 0   ? "hello"
+                               : i == 1 ? "world"
+                                        : "foo") == 0);
+        free(s);
+    }
+    free(b);
+    printf("%10s/%-15s: test passed successfully.\n", module, name);
+}

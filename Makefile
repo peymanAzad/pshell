@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -std=c11 -pedantic -ggdb -MMD -MP
-LIBOBJS = tokenizer.o buffer.o
+LIBOBJS = tokenizer.o buffer.o parser.o
 PSHELLOBJS = main.o $(LIBOBJS)
-TESTOBJS = tests/main.o tests/tokenizer.test.o tests/buffer.test.o $(LIBOBJS)
+TESTOBJS = tests/main.o tests/tokenizer.test.o tests/buffer.test.o tests/parser.test.o $(LIBOBJS)
 
 .PHONY: all clean
 

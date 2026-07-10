@@ -69,6 +69,7 @@ typedef struct SyntaxNode {
 } SyntaxNode;
 
 SyntaxNode *alloc_node(SyntaxType type);
+void free_node(SyntaxNode *node);
 
 typedef struct Parser {
     char *input;
@@ -78,6 +79,7 @@ typedef struct Parser {
 } Parser;
 
 Parser *alloc_parser(char *input);
+void free_parser(Parser *p);
 
 Token *peek(Parser *p);
 Token *advance(Parser *p);

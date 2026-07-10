@@ -4,7 +4,13 @@
 #include <string.h>
 #define isredirect(type) ((type) == gt || (type) == dgt || (type) == lt)
 #define isassign(token)                                                        \
-    ((token)->type == word && (strchr((token)->value->data, '=') != NULL))
+    ((token) != NULL && (token)->type == word &&                               \
+     (strchr((token)->value->data, '=') != NULL))
+#define isprefix(token)                                                        \
+    ((token) != NULL && ((isredirect((token)->type)) || (isassign(token))))
+#define issuffix(token)                                                        \
+    ((token) != NULL &&                                                        \
+     ((isredirect((token)->type)) || ((token)->type == word)))
 
 SyntaxNode *alloc_node(SyntaxType type) {
     SyntaxNode *node = (SyntaxNode *)malloc(sizeof(SyntaxNode));
@@ -50,13 +56,19 @@ Parser *alloc_parser(char *input) {
 }
 
 void free_parser(Parser *p) {
-    free_token(p->current);
+    if (p->current)
+        free_token(p->current);
     free(p);
 }
 
 Token *peek(Parser *p) {
     if (!p->has_current) {
         p->cursor = next_token(p->current, p->input, p->cursor);
+        if (p->cursor == 0) {
+            p->current = NULL;
+            p->has_current = false;
+            return NULL;
+        }
         p->has_current = true;
     }
     return p->current;
@@ -143,4 +155,42 @@ SyntaxNode *proccess_prefix(Parser *p) {
         node = proccess_assignment(p);
     }
     return node;
+}
+
+//* command     → prefix* word suffix* | prefix+
+SyntaxNode *proccess_command(Parser *p) {
+    SyntaxNode *comm = alloc_node(command);
+    SyntaxNode *prefix;
+    SyntaxNode *prefixtail = NULL;
+    peek(p);
+    while (isprefix(p->current)) {
+        prefix = proccess_prefix(p);
+        peek(p);
+        if (prefixtail == NULL) {
+            comm->prefixes = prefix;
+        } else {
+            prefixtail->next = prefix;
+        }
+        prefixtail = prefix;
+    }
+    Token *current = peek(p);
+    if (current == NULL)
+        return comm;
+    assert(current->type == word);
+    comm->value = initbuf(current->value->data);
+    advance(p);
+    peek(p);
+    SyntaxNode *suffix;
+    SyntaxNode *suffixtail = NULL;
+    while (issuffix(p->current)) {
+        suffix = proccess_suffix(p);
+        peek(p);
+        if (suffixtail == NULL) {
+            comm->suffixes = suffix;
+        } else {
+            suffixtail->next = suffix;
+        }
+        suffixtail = suffix;
+    }
+    return comm;
 }

@@ -24,6 +24,7 @@ void test_parser_arg();
 void test_parser_redirect();
 void test_parser_suffix();
 void test_parser_prefix();
+void test_parser_command();
 
 int main() {
     test_whitespaces();
@@ -52,4 +53,5 @@ int main() {
     test_parser_redirect();
     test_parser_suffix();
     test_parser_prefix();
+    test_parser_command();
 }

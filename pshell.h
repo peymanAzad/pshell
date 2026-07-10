@@ -87,7 +87,7 @@ bool check(Parser *p, TokenType ttype);
  * script      → statement (NEWLINE statement)* NEWLINE?
  * statement   → pipeline (ANDD pipeline)*
  * pipeline    → command (PIPE command)*
- * command     → prefix* word suffix | prefix+
+ * command     → prefix* word suffix* | prefix+
  * prefix      → assignment | redirect
  * suffix      → argument | redirect
  * assignment  → WORD

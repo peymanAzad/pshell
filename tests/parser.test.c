@@ -103,3 +103,38 @@ void test_parser_prefix() {
     free_parser(p);
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
+
+void test_parser_command() {
+    static char *name = "ProcCommand";
+    Parser *p = alloc_parser("echo");
+    SyntaxNode *node = proccess_command(p);
+    assert(node->type == command);
+    assertstr(node->value->data, "echo");
+    free_node(node);
+    free_parser(p);
+    p = alloc_parser("foo=bar echo hello");
+    node = proccess_command(p);
+    assert(node->type == command);
+    assertstr(node->value->data, "echo");
+    assertstr(node->prefixes->name->data, "foo");
+    assertstr(node->prefixes->value->data, "bar");
+    assertstr(node->suffixes->value->data, "hello");
+    free_node(node);
+    free_parser(p);
+    p = alloc_parser("foo=bar < input.txt echo hello >> output.txt");
+    node = proccess_command(p);
+    assert(node->type == command);
+    assertstr(node->value->data, "echo");
+    assert(node->prefixes->type == assignment);
+    assertstr(node->prefixes->name->data, "foo");
+    assertstr(node->prefixes->value->data, "bar");
+    assert(node->prefixes->next->type == redirects);
+    assertstr(node->prefixes->next->value->data, "input.txt");
+    assertstr(node->suffixes->value->data, "hello");
+    assert(node->suffixes->type == argument);
+    assertstr(node->suffixes->next->value->data, "output.txt");
+    assert(node->suffixes->next->type == redirects);
+    free_node(node);
+    free_parser(p);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
+}

@@ -9,7 +9,7 @@ void test_whitespaces() {
     Token tokens[3];
     int c = next_token(tokens, "  \t    ", 0);
     assert(c == 0);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_pipes() {
@@ -23,7 +23,7 @@ void test_pipes() {
     assert(c == 3);
     for (int i = 0; i < 3; ++i)
         assert(tokens[i].type == pipe && tokens[i].value == NULL);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_ands() {
@@ -37,7 +37,7 @@ void test_ands() {
     assert(c == 2);
     for (int i = 0; i < 2; ++i)
         assert(tokens[i].type == andd && tokens[i].value == NULL);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_newlines() {
@@ -53,7 +53,7 @@ void test_newlines() {
     assert(c == 6);
     for (int i = 0; i < 6; ++i)
         assert(tokens[i].type == newline && tokens[i].value == NULL);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_backslashes() {
@@ -63,7 +63,7 @@ void test_backslashes() {
     assert(c == 0);
     c = tokenize_all(tokens, "\\\n \\\n\\\n\\ \\\n\\");
     assert(c == 0);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_lts() {
@@ -77,7 +77,7 @@ void test_lts() {
     assert(c == 3);
     for (int i = 0; i < 3; ++i)
         assert(tokens[i].type == lt && tokens[i].value == NULL);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_gts() {
@@ -91,7 +91,7 @@ void test_gts() {
     assert(c == 3);
     for (int i = 0; i < 3; ++i)
         assert(tokens[i].type == gt && tokens[i].value == NULL);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_dgts() {
@@ -106,7 +106,7 @@ void test_dgts() {
     for (int i = 0; i < 2; ++i)
         assert(tokens[i].type == dgt && tokens[i].value == NULL);
     assert(tokens[2].type == gt);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_qoutes() {
@@ -123,7 +123,7 @@ void test_qoutes() {
     assert(strcmp(tokens[0].value->data, "test1") == 0);
     assert(strcmp(tokens[1].value->data, "test2") == 0);
     assert(strcmp(tokens[2].value->data, " ") == 0);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_dqoutes() {
@@ -140,7 +140,7 @@ void test_dqoutes() {
     assert(strcmp(tokens[0].value->data, "abctest1def") == 0);
     assert(strcmp(tokens[1].value->data, "test2") == 0);
     assert(strcmp(tokens[2].value->data, " ") == 0);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_words() {
@@ -157,7 +157,7 @@ void test_words() {
     assert(strcmp(tokens[0].value->data, "test1=x y 2") == 0);
     assert(strcmp(tokens[1].value->data, "--test2") == 0);
     assert(strcmp(tokens[2].value->data, "-x=test  3") == 0);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_mixed() {
@@ -180,5 +180,5 @@ void test_mixed() {
     assert(tokens[8].type == lt && tokens[8].value == NULL);
     assert(tokens[9].type == word && strcmp(tokens[9].value->data, "d") == 0);
     assert(tokens[10].type == pipe && tokens[10].value == NULL);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }

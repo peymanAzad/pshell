@@ -14,7 +14,7 @@ void test_buff_alloc() {
     assert(b->cap == 16);
     assert(strcmp(b->data, "hello world") == 0);
     free(b);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_buffer_push() {
@@ -26,7 +26,7 @@ void test_buffer_push() {
     assert(b->cap == 32);
     assert(strcmp(b->data, "hello worldfoobar baz") == 0);
     free(b);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_buffer_pushc() {
@@ -40,7 +40,7 @@ void test_buffer_pushc() {
     assert(b->cap == 32);
     assert(strcmp(b->data, "hello world foo bar baz") == 0);
     free(b);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_buffer_strtok() {
@@ -61,7 +61,7 @@ void test_buffer_strtok() {
         free(s);
     }
     free(b);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
 void test_buffer_strtokspace() {
@@ -82,5 +82,5 @@ void test_buffer_strtokspace() {
         free(s);
     }
     free(b);
-    printf("%10s/%-15s: test passed successfully.\n", module, name);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }

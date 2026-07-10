@@ -1,6 +1,7 @@
 #include "pshell.h"
 #include <assert.h>
 #include <ctype.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -30,6 +31,15 @@ int pushcbuf(Buffer *buff, char c) {
     buff->data[buff->len++] = c;
     buff->data[buff->len] = '\0';
     return 1;
+}
+
+Buffer *slicebuf(Buffer *buff, size_t start, size_t end) {
+    Buffer *b = allocbuf();
+    char str[end - start + 1];
+    strncpy(str, buff->data + start, end - start);
+    str[end - start] = '\0';
+    pushbuf(b, str);
+    return b;
 }
 
 Buffer *buffstrtok(Buffer *buff, char c, size_t *cursor) {
@@ -67,7 +77,8 @@ Buffer *allocbuf() {
 }
 
 void freebuf(Buffer *b) {
-    free(b->data);
+    if (b->data)
+        free(b->data);
     free(b);
 }
 

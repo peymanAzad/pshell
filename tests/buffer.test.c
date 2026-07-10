@@ -84,3 +84,16 @@ void test_buffer_strtokspace() {
     free(b);
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
+
+void test_buffer_slice() {
+    static char *name = "buffslice";
+    char *str = " hello worldfoo  ";
+    Buffer *b = initbuf(str);
+    Buffer *sliced = slicebuf(b, 7, 12);
+    free(b);
+    assert(strcmp(sliced->data, "world") == 0);
+    assert(sliced->len == 5);
+    assert(sliced->cap == BUFF_SIZE);
+    free(sliced);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
+}

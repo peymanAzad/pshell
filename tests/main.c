@@ -16,6 +16,12 @@ void test_buffer_push();
 void test_buffer_pushc();
 void test_buffer_strtok();
 void test_buffer_strtokspace();
+void test_buffer_slice();
+
+void test_parser_init();
+void test_parser_assign();
+void test_parser_arg();
+void test_parser_redirect();
 
 int main() {
     test_whitespaces();
@@ -36,4 +42,10 @@ int main() {
     test_buffer_pushc();
     test_buffer_strtok();
     test_buffer_strtokspace();
+    test_buffer_slice();
+
+    test_parser_init();
+    test_parser_assign();
+    test_parser_arg();
+    test_parser_redirect();
 }

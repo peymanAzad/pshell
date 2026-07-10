@@ -70,12 +70,13 @@ bool check(Parser *p, TokenType ttype) {
     return t != NULL && t->type == ttype;
 }
 
-SyntaxNode *proccess_arg(Parser *p) {
+SyntaxNode *proccess_assignment(Parser *p) {
     peek(p);
     assert(p->current->value != NULL);
     size_t cursor = 0;
     Buffer *name = buffstrtok(p->current->value, '=', &cursor);
-    Buffer *value = buffstrtok(p->current->value, '=', &cursor);
+    Buffer *value =
+        slicebuf(p->current->value, cursor + 1, p->current->value->len);
     assert(name != NULL);
     assert(value != NULL);
     SyntaxNode *node = alloc_node(assignment);
@@ -85,17 +86,18 @@ SyntaxNode *proccess_arg(Parser *p) {
     return node;
 }
 
-SyntaxNode *process_arg(Parser *p) {
+SyntaxNode *proccess_arg(Parser *p) {
     peek(p);
     assert(p->current->value != NULL);
     SyntaxNode *node = alloc_node(argument);
-    node->value = p->current->value;
+    Buffer *valbuf = initbuf(p->current->value->data);
+    node->value = valbuf;
     advance(p);
     return node;
 }
 
 //* redirect    → (GT | DGT | LT) WORD
-SyntaxNode *process_redirect(Parser *p) {
+SyntaxNode *proccess_redirect(Parser *p) {
     Token *current = peek(p);
     assert(current != NULL);
     assert(current->type == gt || current->type == dgt || current->type == lt);
@@ -104,7 +106,7 @@ SyntaxNode *process_redirect(Parser *p) {
     assert(next->type == word);
     SyntaxNode *node = alloc_node(redirects);
     node->ttype = current->type;
-    node->value = next->value;
+    node->value = initbuf(next->value->data);
     advance(p);
     return node;
 }

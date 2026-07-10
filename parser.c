@@ -2,6 +2,9 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#define isredirect(type) ((type) == gt || (type) == dgt || (type) == lt)
+#define isassign(token)                                                        \
+    ((token)->type == word && (strchr((token)->value->data, '=') != NULL))
 
 SyntaxNode *alloc_node(SyntaxType type) {
     SyntaxNode *node = (SyntaxNode *)malloc(sizeof(SyntaxNode));
@@ -73,6 +76,7 @@ bool check(Parser *p, TokenType ttype) {
 SyntaxNode *proccess_assignment(Parser *p) {
     peek(p);
     assert(p->current->value != NULL);
+    assert(p->current->type == word);
     size_t cursor = 0;
     Buffer *name = buffstrtok(p->current->value, '=', &cursor);
     Buffer *value =
@@ -89,6 +93,7 @@ SyntaxNode *proccess_assignment(Parser *p) {
 SyntaxNode *proccess_arg(Parser *p) {
     peek(p);
     assert(p->current->value != NULL);
+    assert(p->current->type == word);
     SyntaxNode *node = alloc_node(argument);
     Buffer *valbuf = initbuf(p->current->value->data);
     node->value = valbuf;
@@ -100,7 +105,7 @@ SyntaxNode *proccess_arg(Parser *p) {
 SyntaxNode *proccess_redirect(Parser *p) {
     Token *current = peek(p);
     assert(current != NULL);
-    assert(current->type == gt || current->type == dgt || current->type == lt);
+    assert(isredirect(current->type));
     advance(p);
     Token *next = peek(p);
     assert(next->type == word);
@@ -108,5 +113,34 @@ SyntaxNode *proccess_redirect(Parser *p) {
     node->ttype = current->type;
     node->value = initbuf(next->value->data);
     advance(p);
+    return node;
+}
+
+//* suffix      → argument | redirect
+SyntaxNode *proccess_suffix(Parser *p) {
+    Token *current = peek(p);
+    bool redir = isredirect(current->type);
+    assert(redir || current->type == word);
+    SyntaxNode *node;
+    if (redir) {
+        node = proccess_redirect(p);
+    } else {
+        node = proccess_arg(p);
+    }
+    return node;
+}
+
+//* prefix      → assignment | redirect
+SyntaxNode *proccess_prefix(Parser *p) {
+    Token *current = peek(p);
+    bool isredir = isredirect(current->type);
+    bool isassign = isassign(current);
+    assert(isredir || isassign);
+    SyntaxNode *node;
+    if (isredir) {
+        node = proccess_redirect(p);
+    } else {
+        node = proccess_assignment(p);
+    }
     return node;
 }

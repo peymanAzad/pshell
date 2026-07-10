@@ -68,3 +68,38 @@ void test_parser_redirect() {
     free_parser(p);
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
+
+void test_parser_suffix() {
+    static char *name = "ProcSuffix";
+    Parser *p = alloc_parser(">> text.txt");
+    SyntaxNode *node = proccess_suffix(p);
+    assert(node->type == redirects);
+    assertstr(node->value->data, "text.txt");
+    free_node(node);
+    free_parser(p);
+    p = alloc_parser("--arg");
+    node = proccess_suffix(p);
+    assert(node->type == argument);
+    assertstr(node->value->data, "--arg");
+    free_node(node);
+    free_parser(p);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
+}
+
+void test_parser_prefix() {
+    static char *name = "ProcPrefix";
+    Parser *p = alloc_parser("foo=bar");
+    SyntaxNode *node = proccess_prefix(p);
+    assert(node->type == assignment);
+    assertstr(node->name->data, "foo");
+    assertstr(node->value->data, "bar");
+    free_node(node);
+    free_parser(p);
+    p = alloc_parser("> test.txt");
+    node = proccess_suffix(p);
+    assert(node->type == redirects);
+    assertstr(node->value->data, "test.txt");
+    free_node(node);
+    free_parser(p);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
+}

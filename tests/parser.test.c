@@ -179,3 +179,28 @@ void test_parser_statement() {
     free_parser(p);
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
+
+void test_parser_script() {
+    static char *name = "ProcScript";
+    Parser *p = alloc_parser("mkdir test ; cd ./test");
+    SyntaxNode *node = proccess_script(p);
+    assert(node->type == script);
+    assert(node->commands->type == statement);
+    assertstr(node->commands->commands->commands->value->data, "mkdir");
+    assertstr(node->commands->commands->commands->suffixes->value->data,
+              "test");
+    assertstr(node->commands->next->commands->commands->value->data, "cd");
+    assertstr(node->commands->next->commands->commands->suffixes->value->data,
+              "./test");
+    p = alloc_parser("t1 \n t2 ; t3 \n");
+    node = proccess_script(p);
+    assert(node->type == script);
+    assert(node->commands->type == statement);
+    assertstr(node->commands->commands->commands->value->data, "t1");
+    assertstr(node->commands->next->commands->commands->value->data, "t2");
+    assertstr(node->commands->next->next->commands->commands->value->data,
+              "t3");
+    free_node(node);
+    free_parser(p);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
+}

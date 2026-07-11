@@ -262,3 +262,33 @@ SyntaxNode *proccess_statement(Parser *p) {
     }
     return state_node;
 }
+
+//* script      → statement (NEWLINE statement)* NEWLINE?
+SyntaxNode *proccess_script(Parser *p) {
+    SyntaxNode *state_node = proccess_statement(p);
+    if (state_node == NULL) {
+        return NULL;
+    }
+    SyntaxNode *script_node = alloc_node(script);
+    script_node->commands = state_node;
+    SyntaxNode *commtail = state_node;
+    while (check(p, newline)) {
+        advance(p);
+        if (peek(p) == NULL)
+            break;
+        state_node = proccess_statement(p);
+        if (state_node == NULL) {
+            free_node(script_node);
+            return NULL;
+        }
+        commtail->next = state_node;
+        commtail = state_node;
+    }
+    if (peek(p) != NULL) {
+        printerror(
+            "invalid token at the end of script. expected a newline or empty");
+        free_node(script_node);
+        return NULL;
+    }
+    return script_node;
+}

@@ -98,9 +98,7 @@ bool check(Parser *p, TokenType ttype) {
 }
 
 SyntaxNode *proccess_assignment(Parser *p) {
-    peek(p);
-    assert(p->current->value != NULL);
-    assert(p->current->type == word);
+    assert(check(p, word));
     size_t cursor = 0;
     Buffer *name = buffstrtok(p->current->value, '=', &cursor);
     Buffer *value =
@@ -115,9 +113,7 @@ SyntaxNode *proccess_assignment(Parser *p) {
 }
 
 SyntaxNode *proccess_arg(Parser *p) {
-    peek(p);
-    assert(p->current->value != NULL);
-    assert(p->current->type == word);
+    assert(check(p, word));
     SyntaxNode *node = alloc_node(argument);
     Buffer *valbuf = initbuf(p->current->value->data);
     node->value = valbuf;
@@ -228,7 +224,7 @@ SyntaxNode *proccess_pipline(Parser *p) {
     SyntaxNode *pipe_node = alloc_node(pipeline);
     pipe_node->commands = comm;
     SyntaxNode *commtail = comm;
-    while (peek(p) != NULL && p->current->type == pipe) {
+    while (check(p, pipe)) {
         advance(p);
         comm = proccess_command(p);
         if (comm == NULL) {
@@ -250,7 +246,7 @@ SyntaxNode *proccess_statement(Parser *p) {
     SyntaxNode *state_node = alloc_node(statement);
     state_node->commands = pipe_node;
     SyntaxNode *commtail = pipe_node;
-    while (peek(p) != NULL && p->current->type == andd) {
+    while (check(p, andd)) {
         advance(p);
         pipe_node = proccess_pipline(p);
         if (pipe_node == NULL) {

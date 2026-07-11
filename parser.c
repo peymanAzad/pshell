@@ -218,3 +218,25 @@ SyntaxNode *proccess_command(Parser *p) {
     }
     return comm;
 }
+
+//* pipeline    → command (PIPE command)*
+SyntaxNode *proccess_pipline(Parser *p) {
+    SyntaxNode *comm = proccess_command(p);
+    if (comm == NULL) {
+        return NULL;
+    }
+    SyntaxNode *pipe_node = alloc_node(pipeline);
+    pipe_node->commands = comm;
+    SyntaxNode *commtail = comm;
+    while (peek(p) != NULL && p->current->type == pipe) {
+        advance(p);
+        comm = proccess_command(p);
+        if (comm == NULL) {
+            free_node(pipe_node);
+            return NULL;
+        }
+        commtail->next = comm;
+        commtail = comm;
+    }
+    return pipe_node;
+}

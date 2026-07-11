@@ -138,3 +138,23 @@ void test_parser_command() {
     free_parser(p);
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
+
+void test_parser_pipe() {
+    static char *name = "ProcPipe";
+    Parser *p = alloc_parser("echo hello | cat test.txt");
+    SyntaxNode *node = proccess_pipline(p);
+    assert(node->type == pipeline);
+    assertstr(node->commands->value->data, "echo");
+    assertstr(node->commands->suffixes->value->data, "hello");
+    assertstr(node->commands->next->value->data, "cat");
+    assertstr(node->commands->next->suffixes->value->data, "test.txt");
+    p = alloc_parser("t1 | t2 | t3");
+    node = proccess_pipline(p);
+    assert(node->type == pipeline);
+    assertstr(node->commands->value->data, "t1");
+    assertstr(node->commands->next->value->data, "t2");
+    assertstr(node->commands->next->next->value->data, "t3");
+    free_node(node);
+    free_parser(p);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
+}

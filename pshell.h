@@ -97,7 +97,7 @@ bool check(Parser *p, TokenType ttype);
  */
 SyntaxNode *proccess_script(Parser *parser);
 SyntaxNode *proccess_statement(Parser *parser);
-SyntaxNode *process_pipline(Parser *parser);
+SyntaxNode *proccess_pipline(Parser *parser);
 SyntaxNode *proccess_command(Parser *parser);
 SyntaxNode *proccess_prefix(Parser *parser);
 SyntaxNode *proccess_suffix(Parser *parser);

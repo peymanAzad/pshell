@@ -1,5 +1,6 @@
 #include "pshell.h"
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #define isredirect(type) ((type) == gt || (type) == dgt || (type) == lt)
@@ -11,6 +12,9 @@
 #define issuffix(token)                                                        \
     ((token) != NULL &&                                                        \
      ((isredirect((token)->type)) || ((token)->type == word)))
+#define LOG_PREFIX "pshell: syntax error:"
+
+void printerror(char *msg) { fprintf(stderr, "%s %s\n", LOG_PREFIX, msg); }
 
 SyntaxNode *alloc_node(SyntaxType type) {
     SyntaxNode *node = (SyntaxNode *)malloc(sizeof(SyntaxNode));
@@ -25,12 +29,10 @@ SyntaxNode *alloc_node(SyntaxType type) {
                          .next = NULL};
     return node;
 }
+
 void free_node(SyntaxNode *node) {
-    while (node->next != NULL) {
-        SyntaxNode *n = node->next;
-        node->next = node->next->next;
-        free_node(n);
-    }
+    if (node->next != NULL)
+        free_node(node->next);
     if (node->commands)
         free_node(node->commands);
     if (node->prefixes)
@@ -50,8 +52,11 @@ Parser *alloc_parser(char *input) {
     Parser *p = (Parser *)malloc(sizeof(Parser));
     assert(p != NULL);
     Token *t = alloc_token();
-    *p = (Parser){
-        .current = t, .input = input, .has_current = false, .cursor = 0};
+    *p = (Parser){.current = t,
+                  .input = input,
+                  .has_current = false,
+                  .cursor = 0,
+                  .eof = false};
     return p;
 }
 
@@ -62,9 +67,16 @@ void free_parser(Parser *p) {
 }
 
 Token *peek(Parser *p) {
+    if (p->eof)
+        return NULL;
     if (!p->has_current) {
+        if (p->current->value) {
+            freebuf(p->current->value);
+            p->current->value = NULL;
+        }
         p->cursor = next_token(p->current, p->input, p->cursor);
         if (p->cursor == 0) {
+            p->eof = true;
             p->current = NULL;
             p->has_current = false;
             return NULL;
@@ -75,8 +87,8 @@ Token *peek(Parser *p) {
 }
 
 Token *advance(Parser *p) {
-    Token *t = peek(p);
     p->has_current = false;
+    Token *t = peek(p);
     return t;
 }
 
@@ -120,6 +132,10 @@ SyntaxNode *proccess_redirect(Parser *p) {
     assert(isredirect(current->type));
     advance(p);
     Token *next = peek(p);
+    if (next == NULL || next->type != word) {
+        printerror("expected a file name after redirect.");
+        return NULL;
+    }
     assert(next->type == word);
     SyntaxNode *node = alloc_node(redirects);
     node->ttype = current->type;
@@ -146,8 +162,7 @@ SyntaxNode *proccess_suffix(Parser *p) {
 SyntaxNode *proccess_prefix(Parser *p) {
     Token *current = peek(p);
     bool isredir = isredirect(current->type);
-    bool isassign = isassign(current);
-    assert(isredir || isassign);
+    assert(isredir || isassign(current));
     SyntaxNode *node;
     if (isredir) {
         node = proccess_redirect(p);
@@ -162,10 +177,12 @@ SyntaxNode *proccess_command(Parser *p) {
     SyntaxNode *comm = alloc_node(command);
     SyntaxNode *prefix;
     SyntaxNode *prefixtail = NULL;
-    peek(p);
-    while (isprefix(p->current)) {
+    while (isprefix(peek(p))) {
         prefix = proccess_prefix(p);
-        peek(p);
+        if (prefix == NULL) {
+            free_node(comm);
+            return NULL;
+        }
         if (prefixtail == NULL) {
             comm->prefixes = prefix;
         } else {
@@ -174,17 +191,24 @@ SyntaxNode *proccess_command(Parser *p) {
         prefixtail = prefix;
     }
     Token *current = peek(p);
-    if (current == NULL)
+    if (current == NULL || current->type != word) {
+        if (comm->prefixes == NULL) {
+            printerror("expected a command.");
+            free_node(comm);
+            return NULL;
+        }
         return comm;
-    assert(current->type == word);
+    }
     comm->value = initbuf(current->value->data);
     advance(p);
-    peek(p);
     SyntaxNode *suffix;
     SyntaxNode *suffixtail = NULL;
     while (issuffix(p->current)) {
         suffix = proccess_suffix(p);
-        peek(p);
+        if (suffix == NULL) {
+            free_node(comm);
+            return NULL;
+        }
         if (suffixtail == NULL) {
             comm->suffixes = suffix;
         } else {

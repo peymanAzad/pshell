@@ -74,6 +74,7 @@ typedef struct Parser {
     size_t cursor;
     Token *current;
     bool has_current;
+    bool eof;
 } Parser;
 
 Parser *alloc_parser(char *input);

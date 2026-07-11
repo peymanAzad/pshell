@@ -240,3 +240,25 @@ SyntaxNode *proccess_pipline(Parser *p) {
     }
     return pipe_node;
 }
+
+//* statement   → pipeline (ANDD pipeline)*
+SyntaxNode *proccess_statement(Parser *p) {
+    SyntaxNode *pipe_node = proccess_pipline(p);
+    if (pipe_node == NULL) {
+        return NULL;
+    }
+    SyntaxNode *state_node = alloc_node(statement);
+    state_node->commands = pipe_node;
+    SyntaxNode *commtail = pipe_node;
+    while (peek(p) != NULL && p->current->type == andd) {
+        advance(p);
+        pipe_node = proccess_pipline(p);
+        if (pipe_node == NULL) {
+            free_node(state_node);
+            return NULL;
+        }
+        commtail->next = pipe_node;
+        commtail = pipe_node;
+    }
+    return state_node;
+}

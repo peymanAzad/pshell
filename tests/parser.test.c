@@ -158,3 +158,24 @@ void test_parser_pipe() {
     free_parser(p);
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
+
+void test_parser_statement() {
+    static char *name = "ProcStatement";
+    Parser *p = alloc_parser("mkdir test && cd ./test");
+    SyntaxNode *node = proccess_statement(p);
+    assert(node->type == statement);
+    assert(node->commands->type == pipeline);
+    assertstr(node->commands->commands->value->data, "mkdir");
+    assertstr(node->commands->commands->suffixes->value->data, "test");
+    assertstr(node->commands->next->commands->value->data, "cd");
+    assertstr(node->commands->next->commands->suffixes->value->data, "./test");
+    p = alloc_parser("t1 && t2 && t3");
+    node = proccess_statement(p);
+    assert(node->type == statement);
+    assertstr(node->commands->commands->value->data, "t1");
+    assertstr(node->commands->next->commands->value->data, "t2");
+    assertstr(node->commands->next->next->commands->value->data, "t3");
+    free_node(node);
+    free_parser(p);
+    printf("%-10s/%-15s: test passed successfully.\n", module, name);
+}

@@ -26,6 +26,7 @@ void test_parser_suffix();
 void test_parser_prefix();
 void test_parser_command();
 void test_parser_pipe();
+void test_parser_statement();
 
 int main() {
     test_whitespaces();
@@ -56,4 +57,5 @@ int main() {
     test_parser_prefix();
     test_parser_command();
     test_parser_pipe();
+    test_parser_statement();
 }

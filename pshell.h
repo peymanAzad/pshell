@@ -29,7 +29,7 @@ Buffer *slicebuf(Buffer *buff, size_t start, size_t end);
 /*====================================================
  * Tokenizer
  *====================================================*/
-typedef enum TokenType { word, gt, dgt, lt, andd, pipe, newline } TokenType;
+typedef enum TokenType { word, gt, dgt, lt, andd, pip, newline } TokenType;
 
 typedef struct Token {
     TokenType type;
@@ -104,5 +104,10 @@ SyntaxNode *proccess_suffix(Parser *parser);
 SyntaxNode *proccess_redirect(Parser *parser);
 SyntaxNode *proccess_arg(Parser *parser);
 SyntaxNode *proccess_assignment(Parser *parser);
+
+/*====================================================
+ * Interprator
+ *====================================================*/
+int exec_command(SyntaxNode *command);
 
 #endif

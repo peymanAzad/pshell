@@ -2,9 +2,7 @@
 #include "../pshell.h"
 #include <assert.h>
 #include <stdio.h>
-#include <string.h>
 #define module "Parser"
-#define assertstr(x, y) assert(strcmp((x), (y)) == 0)
 
 void test_parser_init() {
     static char *name = "InitParser";

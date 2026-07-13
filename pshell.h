@@ -4,9 +4,11 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 
 #define MAX_WORD_LEN 16
 #define BUFF_SIZE 16
+#define assertstr(x, y) assert(strcmp((x), (y)) == 0)
 
 /*====================================================
  * Buffer
@@ -108,6 +110,7 @@ SyntaxNode *proccess_assignment(Parser *parser);
 /*====================================================
  * Interprator
  *====================================================*/
-int exec_command(SyntaxNode *command);
+void exec_command(SyntaxNode *command);
+int exec_pipeline(SyntaxNode *pipe_node);
 
 #endif

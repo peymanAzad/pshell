@@ -87,26 +87,67 @@ int handle_redirects(SyntaxNode *comm) {
     return 0;
 }
 
-int exec_command(SyntaxNode *comm) {
+void exec_command(SyntaxNode *comm) {
     assert(comm->type == command);
-    assert(comm->value->data);
-    pid_t pid = fork();
-    if (pid == 0) {
-        size_t argc = sizeof_list(comm->suffixes, argument);
-        char *argv[argc + 2];
-        list_to_arr(argv + 1, comm->suffixes, argc, argument);
-        argv[0] = comm->value->data;
-        argv[argc + 1] = NULL;
-        set_prefix_envs(comm->prefixes);
-        if (handle_redirects(comm) == -1) {
-            fprintf(stderr, "error while setting redirects\n");
-            _exit(127);
-        }
-        execvp(argv[0], argv);
-        perror("execvp");
+    size_t argc = sizeof_list(comm->suffixes, argument);
+    char *argv[argc + 2];
+    list_to_arr(argv + 1, comm->suffixes, argc, argument);
+    argv[0] = comm->value->data;
+    argv[argc + 1] = NULL;
+    set_prefix_envs(comm->prefixes);
+
+    if (handle_redirects(comm) == -1) {
+        fprintf(stderr, "error while setting redirects\n");
         _exit(127);
     }
-    int stat;
-    waitpid(pid, &stat, 0);
-    return WIFEXITED(stat) ? WEXITSTATUS(stat) : -1;
+    execvp(argv[0], argv);
+    perror("execvp");
+    _exit(127);
+}
+
+int exec_pipeline(SyntaxNode *pipe_node) {
+    assert(pipe_node->type == pipeline);
+    size_t comm_count = sizeof_list(pipe_node->commands, command);
+    int pips[comm_count - 1][2];
+    for (size_t i = 0; i < comm_count - 1; ++i) {
+        pipe(pips[i]);
+    }
+
+    pid_t pids[comm_count];
+    SyntaxNode *comm = pipe_node->commands;
+    for (size_t i = 0; i < comm_count; ++i, comm = comm->next) {
+        if (comm->value == NULL) {
+            set_prefix_envs(comm->prefixes);
+            pids[i] = -1;
+            continue;
+        }
+        pids[i] = fork();
+        if (pids[i] == 0) {
+            if (i >= 1)
+                dup2(pips[i - 1][0], STDIN_FILENO);
+            if (i < comm_count - 1)
+                dup2(pips[i][1], STDOUT_FILENO);
+            for (size_t j = 0; j < comm_count - 1; ++j) {
+                close(pips[j][0]);
+                close(pips[j][1]);
+            }
+            exec_command(comm);
+        }
+    }
+    for (size_t i = 0; i < comm_count - 1; ++i) {
+        close(pips[i][0]);
+        close(pips[i][1]);
+    }
+
+    int last_stat;
+    for (size_t i = 0; i < comm_count; ++i) {
+        int stat;
+        if (pids[i] == -1)
+            stat = 0;
+        else
+            waitpid(pids[i], &stat, 0);
+        if (i == comm_count - 1)
+            last_stat = WIFEXITED(stat) ? WEXITSTATUS(stat) : -1;
+    }
+    return last_stat;
 }

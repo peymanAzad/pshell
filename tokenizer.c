@@ -41,7 +41,7 @@ size_t next_token(Token *token, char *input, size_t cursor) {
             return cursor;
 
         case '|':
-            *token = (Token){.type = pipe, .value = NULL};
+            *token = (Token){.type = pip, .value = NULL};
             return cursor;
 
         case '<':

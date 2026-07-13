@@ -17,12 +17,12 @@ void test_pipes() {
     Token tokens[3];
     int c = tokenize_all(tokens, "|");
     assert(c == 1);
-    assert(tokens[0].type == pipe);
+    assert(tokens[0].type == pip);
     assert(tokens[0].value == NULL);
     c = tokenize_all(tokens, "|||");
     assert(c == 3);
     for (int i = 0; i < 3; ++i)
-        assert(tokens[i].type == pipe && tokens[i].value == NULL);
+        assert(tokens[i].type == pip && tokens[i].value == NULL);
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
@@ -179,6 +179,6 @@ void test_mixed() {
            strcmp(tokens[7].value->data, "test.txt") == 0);
     assert(tokens[8].type == lt && tokens[8].value == NULL);
     assert(tokens[9].type == word && strcmp(tokens[9].value->data, "d") == 0);
-    assert(tokens[10].type == pipe && tokens[10].value == NULL);
+    assert(tokens[10].type == pip && tokens[10].value == NULL);
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }

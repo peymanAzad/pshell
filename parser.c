@@ -126,6 +126,7 @@ SyntaxNode *proccess_redirect(Parser *p) {
     Token *current = peek(p);
     assert(current != NULL);
     assert(isredirect(current->type));
+    TokenType ttype = current->type;
     advance(p);
     Token *next = peek(p);
     if (next == NULL || next->type != word) {
@@ -134,7 +135,7 @@ SyntaxNode *proccess_redirect(Parser *p) {
     }
     assert(next->type == word);
     SyntaxNode *node = alloc_node(redirects);
-    node->ttype = current->type;
+    node->ttype = ttype;
     node->value = initbuf(next->value->data);
     advance(p);
     return node;
@@ -224,7 +225,7 @@ SyntaxNode *proccess_pipline(Parser *p) {
     SyntaxNode *pipe_node = alloc_node(pipeline);
     pipe_node->commands = comm;
     SyntaxNode *commtail = comm;
-    while (check(p, pipe)) {
+    while (check(p, pip)) {
         advance(p);
         comm = proccess_command(p);
         if (comm == NULL) {

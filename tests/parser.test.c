@@ -57,12 +57,14 @@ void test_parser_redirect() {
     Parser *p = alloc_parser("> text.txt");
     SyntaxNode *node = proccess_redirect(p);
     assert(node->type == redirects);
+    assert(node->ttype == gt);
     assertstr(node->value->data, "text.txt");
     free_node(node);
     free_parser(p);
     p = alloc_parser("< 'test 1.txt'");
     node = proccess_redirect(p);
     assert(node->type == redirects);
+    assert(node->ttype == lt);
     assertstr(node->value->data, "test 1.txt");
     free_node(node);
     free_parser(p);

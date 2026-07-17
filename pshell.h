@@ -112,5 +112,7 @@ SyntaxNode *proccess_assignment(Parser *parser);
  *====================================================*/
 void exec_command(SyntaxNode *command);
 int exec_pipeline(SyntaxNode *pipe_node);
+int exec_statement(SyntaxNode *state_node);
+int exec_script(SyntaxNode *script);
 
 #endif

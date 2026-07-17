@@ -151,3 +151,25 @@ int exec_pipeline(SyntaxNode *pipe_node) {
     }
     return last_stat;
 }
+
+int exec_statement(SyntaxNode *state_node) {
+    int stat = 0;
+    for (SyntaxNode *cursor = state_node->commands; cursor != NULL;
+         cursor = cursor->next) {
+        assert(cursor->type == pipeline);
+        stat = exec_pipeline(cursor);
+        if (stat != 0)
+            break;
+    }
+    return stat;
+}
+
+int exec_script(SyntaxNode *script) {
+    int stat = 0;
+    for (SyntaxNode *cursor = script->commands; cursor != NULL;
+         cursor = cursor->next) {
+        assert(cursor->type == statement);
+        stat = exec_statement(cursor);
+    }
+    return stat;
+}

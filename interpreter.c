@@ -87,6 +87,21 @@ int handle_redirects(SyntaxNode *comm) {
     return 0;
 }
 
+int exec_command_toplevel(SyntaxNode *comm) {
+    assert(comm->type == command);
+    builtin_fn bfn = find_builtin(comm->value->data);
+    if (bfn != NULL) {
+        return bfn(comm);
+    }
+    pid_t pid = fork();
+    if (pid == 0) {
+        exec_command(comm);
+    }
+    int stat;
+    waitpid(pid, &stat, 0);
+    return WIFEXITED(stat) ? WEXITSTATUS(stat) : -1;
+}
+
 void exec_command(SyntaxNode *comm) {
     assert(comm->type == command);
     size_t argc = sizeof_list(comm->suffixes, argument);
@@ -95,6 +110,12 @@ void exec_command(SyntaxNode *comm) {
     argv[0] = comm->value->data;
     argv[argc + 1] = NULL;
     set_prefix_envs(comm->prefixes);
+
+    builtin_fn bfn = find_builtin(comm->value->data);
+    if (bfn != NULL) {
+        int stat = bfn(comm);
+        _exit(stat);
+    }
 
     if (handle_redirects(comm) == -1) {
         fprintf(stderr, "error while setting redirects\n");
@@ -115,6 +136,15 @@ int exec_pipeline(SyntaxNode *pipe_node) {
 
     pid_t pids[comm_count];
     SyntaxNode *comm = pipe_node->commands;
+
+    if (comm_count == 1) {
+        if (comm->value == NULL) {
+            set_prefix_envs(comm->prefixes);
+            return 0;
+        }
+        return exec_command_toplevel(comm);
+    }
+
     for (size_t i = 0; i < comm_count; ++i, comm = comm->next) {
         if (comm->value == NULL) {
             set_prefix_envs(comm->prefixes);

@@ -110,9 +110,25 @@ SyntaxNode *proccess_assignment(Parser *parser);
 /*====================================================
  * Interprator
  *====================================================*/
+int exec_command_toplevel(SyntaxNode *command);
 void exec_command(SyntaxNode *command);
 int exec_pipeline(SyntaxNode *pipe_node);
 int exec_statement(SyntaxNode *state_node);
 int exec_script(SyntaxNode *script);
+
+/*====================================================
+ * Built-ins
+ *====================================================*/
+int builtin_cd(SyntaxNode *comm);
+int builtin_pwd(SyntaxNode *comm);
+int builtin_exit(SyntaxNode *comm);
+
+typedef int (*builtin_fn)(SyntaxNode *comm);
+typedef struct Builtin {
+    char *name;
+    builtin_fn fn;
+} Builtin;
+
+builtin_fn find_builtin(char *name);
 
 #endif

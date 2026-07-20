@@ -131,4 +131,12 @@ typedef struct Builtin {
 
 builtin_fn find_builtin(char *name);
 
+
+/*====================================================
+ * Runner
+ *====================================================*/
+int eval(char *str);
+int run_repl();
+int run_file(char *path);
+
 #endif

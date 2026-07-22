@@ -4,6 +4,7 @@ BASE_CFLAGS = -Wall -Wextra -std=c11 -pedantic -MMD -MP -D_POSIX_C_SOURCE=200809
 DEBUG_CFLAGS = $(BASE_CFLAGS) -Werror -ggdb -O0 -DDEBUG -fsanitize=address,undefined
 RELEASE_CFLAGS = $(BASE_CFLAGS) -O2 -DNDEBUG -flto
 
+BUILD_DIR = build
 SRC_DIR = src
 TEST_DIR = tests
 
@@ -12,12 +13,11 @@ TESTSRCS = main.c tokenizer.test.c buffer.test.c parser.test.c interpreter.test.
 
 PREFIX ?= /usr/local
 BINDIR = $(PREFIX)/bin
+MANDIR = $(PREFIX)/share/man/man1
 
 .PHONY: all debug release test clean install uninstall
 
 all: debug
-
-BUILD_DIR = build
 
 DEBUG_DIR = $(BUILD_DIR)/debug
 DEBUG_LIBOBJS = $(addprefix $(DEBUG_DIR)/, $(LIBSRCS:.c=.o))
@@ -63,9 +63,11 @@ $(TEST_DIR_BUILD)/%.o: $(TEST_DIR)/%.c
 
 install: release
 	install -Dm755 $(RELEASE_DIR)/pshell $(BINDIR)/pshell
+	install -Dm644 man/pshell.1 $(MANDIR)/pshell.1
 
 uninstall:
 	rm -f $(BINDIR)/pshell
+	rm -f $(MANDIR)/pshell.1
 
 clean:
 	rm -rf $(BUILD_DIR)

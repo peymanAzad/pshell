@@ -1,0 +1,76 @@
+.TH PSHELL 1 "2026-07-23" "pshell 0.1" "User Commands"
+.SH NAME
+pshell \- a simple interactive shell for POSIX
+.SH SYNOPSIS
+.B pshell
+.RI [ script-file ]
+.SH DESCRIPTION
+.B pshell
+is a minimal command interpreter supporting pipelines, redirections,
+variable assignment, and conditional execution via
+.BR && .
+.PP
+If
+.I script-file
+is given,
+.B pshell
+reads and executes commands from that file.
+Otherwise it starts an interactive prompt reading from standard input.
+.SH SYNTAX
+.TP
+.BI command " arg1 arg2 ..."
+Runs
+.I command
+with the given arguments.
+.TP
+.BI command1 " | " command2
+Pipes the standard output of
+.I command1
+into the standard input of
+.I command2 .
+.TP
+.BI command1 " && " command2
+Runs
+.I command2
+only if
+.I command1
+exits successfully.
+.TP
+.BI name = value
+Sets the environment variable
+.I name
+to
+.I value ,
+either for the shell itself or for the following command only.
+.TP
+.BI command " > " file
+Redirects standard output to
+.I file ,
+truncating it.
+.TP
+.BI command " >> " file
+Redirects standard output to
+.I file ,
+appending to it.
+.TP
+.BI command " < " file
+Redirects standard input from
+.I file .
+.SH BUILTINS
+.TP
+.B cd
+.RI [ dir ]
+Change the shell's working directory to
+.IR dir ,
+or to
+.B $HOME
+if omitted.
+.TP
+.B pwd
+Print the current working directory.
+.TP
+.B exit
+.RI [ code ]
+Exit the shell with the given status code, or 0 if omitted.
+.SH AUTHOR
+Written by Peyman.

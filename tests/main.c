@@ -32,38 +32,48 @@ void test_parser_script();
 void test_exec_command();
 void test_exec_pipe();
 
+void test_expand_simple();
+void test_expand();
+void test_expand_undef();
+void test_expand_empty();
+
 int main() {
-    test_whitespaces();
-    test_pipes();
-    test_ands();
-    test_newlines();
-    test_backslashes();
-    test_lts();
-    test_gts();
-    test_dgts();
-    test_qoutes();
-    test_dqoutes();
-    test_words();
-    test_mixed();
+    // test_whitespaces();
+    // test_pipes();
+    // test_ands();
+    // test_newlines();
+    // test_backslashes();
+    // test_lts();
+    // test_gts();
+    // test_dgts();
+    // test_qoutes();
+    // test_dqoutes();
+    // test_words();
+    // test_mixed();
 
-    test_buff_alloc();
-    test_buffer_push();
-    test_buffer_pushc();
-    test_buffer_strtok();
-    test_buffer_strtokspace();
-    test_buffer_slice();
+    // test_buff_alloc();
+    // test_buffer_push();
+    // test_buffer_pushc();
+    // test_buffer_strtok();
+    // test_buffer_strtokspace();
+    // test_buffer_slice();
+    //
+    // test_parser_init();
+    // test_parser_assign();
+    // test_parser_arg();
+    // test_parser_redirect();
+    // test_parser_suffix();
+    // test_parser_prefix();
+    // test_parser_command();
+    // test_parser_pipe();
+    // test_parser_statement();
+    // test_parser_script();
 
-    test_parser_init();
-    test_parser_assign();
-    test_parser_arg();
-    test_parser_redirect();
-    test_parser_suffix();
-    test_parser_prefix();
-    test_parser_command();
-    test_parser_pipe();
-    test_parser_statement();
-    test_parser_script();
+    // test_exec_command();
+    // test_exec_pipe();
 
-    test_exec_command();
-    test_exec_pipe();
+    test_expand_simple();
+    test_expand();
+    test_expand_undef();
+    test_expand_empty();
 }

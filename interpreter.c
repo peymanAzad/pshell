@@ -1,9 +1,11 @@
 #include "pshell.h"
 #include <assert.h>
+#include <ctype.h>
 #include <fcntl.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -21,8 +23,12 @@ size_t list_to_arr(char *arr[], SyntaxNode *node, size_t size,
     size_t c = 0;
     for (SyntaxNode *cursor = node; cursor != NULL && c < size;
          cursor = cursor->next) {
-        if (cursor->type == type)
+        if (cursor->type == type) {
+            Buffer *expanded = expand_value(cursor->value);
+            freebuf(cursor->value);
+            cursor->value = expanded;
             arr[c++] = cursor->value->data;
+        }
     }
     return c;
 }
@@ -32,6 +38,12 @@ size_t set_prefix_envs(SyntaxNode *node) {
     for (SyntaxNode *cursor = node; cursor != NULL;
          cursor = cursor->next, ++c) {
         if (cursor->type == assignment) {
+            Buffer *expanded = expand_value(cursor->value);
+            freebuf(cursor->value);
+            cursor->value = expanded;
+            Buffer *exp_name = expand_value(cursor->name);
+            freebuf(cursor->name);
+            cursor->name = exp_name;
             setenv(cursor->name->data, cursor->value->data, 1);
         }
     }
@@ -41,6 +53,9 @@ size_t set_prefix_envs(SyntaxNode *node) {
 int handle_redirect(SyntaxNode *node) {
     assert(node->type == redirects);
     int fd;
+    Buffer *expanded = expand_value(node->value);
+    freebuf(node->value);
+    node->value = expanded;
     switch (node->ttype) {
     case gt:
         fd = open(node->value->data, O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -87,10 +102,41 @@ int handle_redirects(SyntaxNode *comm) {
     return 0;
 }
 
+Buffer *expand_value(Buffer *in) {
+    Buffer *out = allocbuf();
+    for (size_t i = 0; i < in->len;) {
+        if (in->data[i] == '$' &&
+            (isalpha(in->data[i + 1]) || in->data[i + 1] == '_')) {
+            size_t start = ++i;
+            while (isalnum(in->data[++i]) || in->data[i] == '_')
+                ;
+            size_t len = i - start;
+            char varname[len + 1];
+            memcpy(varname, in->data + start, len);
+            varname[len] = '\0';
+            char *varval = getenv(varname);
+            pushbuf(out, varval ? varval : "");
+        } else {
+            pushcbuf(out, in->data[i]);
+            ++i;
+        }
+    }
+    return out;
+}
+
 int exec_command_toplevel(SyntaxNode *comm) {
     assert(comm->type == command);
+    Buffer *expanded = expand_value(comm->value);
     builtin_fn bfn = find_builtin(comm->value->data);
+    if (bfn == NULL) {
+        bfn = find_builtin(expanded->data);
+        if (bfn != NULL) {
+            freebuf(comm->value);
+            comm->value = expanded;
+        }
+    }
     if (bfn != NULL) {
+        set_prefix_envs(comm->prefixes);
         return bfn(comm);
     }
     pid_t pid = fork();
@@ -104,12 +150,17 @@ int exec_command_toplevel(SyntaxNode *comm) {
 
 void exec_command(SyntaxNode *comm) {
     assert(comm->type == command);
+    set_prefix_envs(comm->prefixes);
     size_t argc = sizeof_list(comm->suffixes, argument);
     char *argv[argc + 2];
     list_to_arr(argv + 1, comm->suffixes, argc, argument);
+
+    Buffer *expanded = expand_value(comm->value);
+    freebuf(comm->value);
+    comm->value = expanded;
+
     argv[0] = comm->value->data;
     argv[argc + 1] = NULL;
-    set_prefix_envs(comm->prefixes);
 
     builtin_fn bfn = find_builtin(comm->value->data);
     if (bfn != NULL) {

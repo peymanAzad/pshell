@@ -11,6 +11,11 @@ static Builtin builtins[] = {{"cd", builtin_cd},
                              {NULL, NULL}};
 
 int builtin_cd(SyntaxNode *comm) {
+    if (comm->suffixes) {
+        Buffer *expanded = expand_value(comm->suffixes->value);
+        freebuf(comm->suffixes->value);
+        comm->suffixes->value = expanded;
+    }
     char *target =
         comm->suffixes ? comm->suffixes->value->data : getenv("HOME");
     if (chdir(target) == -1) {

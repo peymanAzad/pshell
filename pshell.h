@@ -86,6 +86,8 @@ Token *peek(Parser *p);
 Token *advance(Parser *p);
 bool check(Parser *p, TokenType ttype);
 
+Buffer *expand_value(Buffer *in);
+
 /*
  * script      → statement (NEWLINE statement)* NEWLINE?
  * statement   → pipeline (ANDD pipeline)*

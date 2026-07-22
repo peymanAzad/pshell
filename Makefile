@@ -1,37 +1,73 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -std=c11 -pedantic -ggdb -MMD -MP -D_POSIX_C_SOURCE=200809L -Iinclude
+BASE_CFLAGS = -Wall -Wextra -std=c11 -pedantic -MMD -MP -D_POSIX_C_SOURCE=200809L -Iinclude
+
+DEBUG_CFLAGS = $(BASE_CFLAGS) -Werror -ggdb -O0 -DDEBUG -fsanitize=address,undefined
+RELEASE_CFLAGS = $(BASE_CFLAGS) -O2 -DNDEBUG -flto
 
 SRC_DIR = src
-BUILD_DIR = build
 TEST_DIR = tests
 
 LIBSRCS = tokenizer.c buffer.c parser.c interpreter.c builtins.c runner.c
-LIBOBJS = $(addprefix $(BUILD_DIR)/, $(LIBSRCS:.c=.o))
-
-PSHELLOBJS = $(BUILD_DIR)/main.o $(LIBOBJS)
-
 TESTSRCS = main.c tokenizer.test.c buffer.test.c parser.test.c interpreter.test.c expand.test.c
-TESTOBJS = $(addprefix $(BUILD_DIR)/tests/, $(TESTSRCS:.c=.o)) $(LIBOBJS)
 
-.PHONY: all clean
+PREFIX ?= /usr/local
+BINDIR = $(PREFIX)/bin
 
-all: pshell
+.PHONY: all debug release test clean install uninstall
 
-pshell: $(PSHELLOBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+all: debug
 
-test: $(TESTOBJS)
-	$(CC) $(CFLAGS) -o $@ $^
+BUILD_DIR = build
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+DEBUG_DIR = $(BUILD_DIR)/debug
+DEBUG_LIBOBJS = $(addprefix $(DEBUG_DIR)/, $(LIBSRCS:.c=.o))
+DEBUG_OBJS = $(DEBUG_DIR)/main.o $(DEBUG_LIBOBJS)
+
+debug: $(DEBUG_DIR)/pshell
+
+$(DEBUG_DIR)/pshell: $(DEBUG_OBJS)
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(DEBUG_CFLAGS) -o $@ $^
 
-$(BUILD_DIR)/tests/%.o: $(TEST_DIR)/%.c
+$(DEBUG_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(DEBUG_CFLAGS) -c $< -o $@
+
+RELEASE_DIR = $(BUILD_DIR)/release
+RELEASE_LIBOBJS = $(addprefix $(RELEASE_DIR)/, $(LIBSRCS:.c=.o))
+RELEASE_OBJS = $(RELEASE_DIR)/main.o $(RELEASE_LIBOBJS)
+
+release: $(RELEASE_DIR)/pshell
+
+$(RELEASE_DIR)/pshell: $(RELEASE_OBJS)
+	@mkdir -p $(dir $@)
+	$(CC) $(RELEASE_CFLAGS) -o $@ $^
+
+$(RELEASE_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(RELEASE_CFLAGS) -c $< -o $@
+
+TEST_DIR_BUILD = $(BUILD_DIR)/test
+TESTOBJS = $(addprefix $(TEST_DIR_BUILD)/, $(TESTSRCS:.c=.o)) $(DEBUG_LIBOBJS)
+
+test: $(TEST_DIR_BUILD)/test
+	./$(TEST_DIR_BUILD)/test
+
+$(TEST_DIR_BUILD)/test: $(TESTOBJS)
+	@mkdir -p $(dir $@)
+	$(CC) $(DEBUG_CFLAGS) -o $@ $^
+
+$(TEST_DIR_BUILD)/%.o: $(TEST_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(DEBUG_CFLAGS) -c $< -o $@
+
+install: release
+	install -Dm755 $(RELEASE_DIR)/pshell $(BINDIR)/pshell
+
+uninstall:
+	rm -f $(BINDIR)/pshell
 
 clean:
-	rm -rf pshell test $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)
 
--include $(PSHELLOBJS:.o=.d) $(TESTOBJS:.o=.d)
+-include $(DEBUG_OBJS:.o=.d) $(RELEASE_OBJS:.o=.d) $(TESTOBJS:.o=.d)

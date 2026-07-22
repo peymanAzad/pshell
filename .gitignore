@@ -1,5 +1,5 @@
+build/
 *.o
-*.gch
 *.d
 pshell
 test

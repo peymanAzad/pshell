@@ -19,7 +19,7 @@ typedef struct Buffer {
     size_t cap;
 } Buffer;
 
-Buffer *allocbuf();
+Buffer *allocbuf(void);
 Buffer *initbuf(char *data);
 void freebuf(Buffer *);
 int pushbuf(Buffer *buff, char *data);
@@ -38,7 +38,7 @@ typedef struct Token {
     Buffer *value;
 } Token;
 
-Token *alloc_token();
+Token *alloc_token(void);
 void free_token(Token *t);
 size_t next_token(Token *token, char *input, size_t cursor);
 int tokenize_all(Token *tokens, char *input);
@@ -138,7 +138,7 @@ builtin_fn find_builtin(char *name);
  * Runner
  *====================================================*/
 int eval(char *str);
-int run_repl();
+int run_repl(void);
 int run_file(char *path);
 
 #endif

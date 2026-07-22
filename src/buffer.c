@@ -66,7 +66,7 @@ Buffer *buffstrtokspace(Buffer *buff, size_t *cursor) {
     return sliced;
 }
 
-Buffer *allocbuf() {
+Buffer *allocbuf(void) {
     Buffer *b = malloc(sizeof(Buffer));
     assert(b != NULL);
     b->data = calloc(BUFF_SIZE, sizeof(char));

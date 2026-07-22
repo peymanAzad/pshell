@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Token *alloc_token() {
+Token *alloc_token(void) {
     Token *t = (Token *)malloc(sizeof(Token));
     assert(t != NULL);
     t->value = NULL;

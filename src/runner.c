@@ -18,7 +18,7 @@ int eval(char *str) {
     return stat;
 }
 
-int run_repl() {
+int run_repl(void) {
     int stat = 0;
     Buffer *buff = allocbuf();
     printf("Welcome to pshell, the simple interactive shell for POSIX\n");

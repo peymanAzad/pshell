@@ -1,10 +1,10 @@
-#include "../pshell.h"
+#include "pshell.h"
 #include <assert.h>
 #include <stdlib.h>
 
 #define module "Expand"
 
-void test_expand_simple() {
+void test_expand_simple(void) {
     static char *name = "simple";
     setenv("foo", "bar", 1);
     Buffer *b = allocbuf();
@@ -17,7 +17,7 @@ void test_expand_simple() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_expand() {
+void test_expand(void) {
     static char *name = "comp";
     setenv("foo", "bar", 1);
     setenv("bar", "baz", 1);
@@ -29,7 +29,7 @@ void test_expand() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_expand_undef() {
+void test_expand_undef(void) {
     static char *name = "undefined";
     unsetenv("foo");
     Buffer *b = allocbuf();
@@ -40,7 +40,7 @@ void test_expand_undef() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_expand_empty() {
+void test_expand_empty(void) {
     static char *name = "empty";
     Buffer *b = allocbuf();
     pushbuf(b, "");

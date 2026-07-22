@@ -1,10 +1,10 @@
-#include "../pshell.h"
+#include "pshell.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #define module "Tokenizer"
 
-void test_whitespaces() {
+void test_whitespaces(void) {
     static char *name = "Whitespaces";
     Token tokens[3];
     int c = next_token(tokens, "  \t    ", 0);
@@ -12,7 +12,7 @@ void test_whitespaces() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_pipes() {
+void test_pipes(void) {
     static char *name = "Pipes";
     Token tokens[3];
     int c = tokenize_all(tokens, "|");
@@ -26,7 +26,7 @@ void test_pipes() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_ands() {
+void test_ands(void) {
     static char *name = "&&";
     Token tokens[3];
     int c = tokenize_all(tokens, "&&");
@@ -40,7 +40,7 @@ void test_ands() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_newlines() {
+void test_newlines(void) {
     static char *name = "Newline";
     Token tokens[6];
     int c = tokenize_all(tokens, "\n");
@@ -56,7 +56,7 @@ void test_newlines() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_backslashes() {
+void test_backslashes(void) {
     static char *name = "Backslash";
     Token tokens[3];
     int c = tokenize_all(tokens, "\\");
@@ -66,7 +66,7 @@ void test_backslashes() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_lts() {
+void test_lts(void) {
     static char *name = "<";
     Token tokens[3];
     int c = tokenize_all(tokens, "<");
@@ -80,7 +80,7 @@ void test_lts() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_gts() {
+void test_gts(void) {
     static char *name = ">";
     Token tokens[3];
     int c = tokenize_all(tokens, ">");
@@ -94,7 +94,7 @@ void test_gts() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_dgts() {
+void test_dgts(void) {
     static char *name = ">>";
     Token tokens[3];
     int c = tokenize_all(tokens, ">>");
@@ -109,7 +109,7 @@ void test_dgts() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_qoutes() {
+void test_qoutes(void) {
     static char *name = "Qoute";
     Token tokens[3];
     int c = tokenize_all(tokens, "'");
@@ -126,7 +126,7 @@ void test_qoutes() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_dqoutes() {
+void test_dqoutes(void) {
     static char *name = "DoubleQoute";
     Token tokens[3];
     int c = tokenize_all(tokens, "\"");
@@ -143,7 +143,7 @@ void test_dqoutes() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_words() {
+void test_words(void) {
     static char *name = "Words";
     Token tokens[3];
     int c = tokenize_all(tokens, "test");
@@ -160,7 +160,7 @@ void test_words() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_mixed() {
+void test_mixed(void) {
     static char *name = "Mixed";
     Token tokens[11];
     int c = tokenize_all(

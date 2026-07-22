@@ -1,4 +1,4 @@
-#include "../pshell.h"
+#include "pshell.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,7 +6,7 @@
 #include <unistd.h>
 #define module "Interpret"
 
-void test_exec_command() {
+void test_exec_command(void) {
     static char *name = "ExecComm";
     Parser *p = alloc_parser("TZ=Pacific/Auckland date > ./test.txt");
     SyntaxNode *comm = proccess_command(p);
@@ -23,7 +23,7 @@ void test_exec_command() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_exec_pipe() {
+void test_exec_pipe(void) {
     static char *name = "ExecPipe";
     Parser *p = alloc_parser("ls | sort -hr | sed 's/\\./*/g' > test.txt");
     SyntaxNode *pipe_node = proccess_pipline(p);

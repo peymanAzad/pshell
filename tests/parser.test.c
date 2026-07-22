@@ -1,10 +1,9 @@
-
-#include "../pshell.h"
+#include "pshell.h"
 #include <assert.h>
 #include <stdio.h>
 #define module "Parser"
 
-void test_parser_init() {
+void test_parser_init(void) {
     static char *name = "InitParser";
     SyntaxNode *node = alloc_node(argument);
     Parser *p = alloc_parser("test");
@@ -14,7 +13,7 @@ void test_parser_init() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_parser_assign() {
+void test_parser_assign(void) {
     static char *name = "ProcAssign";
     Parser *p = alloc_parser("foo=bar");
     SyntaxNode *node = proccess_assignment(p);
@@ -33,7 +32,7 @@ void test_parser_assign() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_parser_arg() {
+void test_parser_arg(void) {
     static char *name = "ProcArg";
     Parser *p = alloc_parser("-x1");
     SyntaxNode *node = proccess_arg(p);
@@ -50,7 +49,7 @@ void test_parser_arg() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_parser_redirect() {
+void test_parser_redirect(void) {
     static char *name = "ProcRedirect";
     Parser *p = alloc_parser("> text.txt");
     SyntaxNode *node = proccess_redirect(p);
@@ -69,7 +68,7 @@ void test_parser_redirect() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_parser_suffix() {
+void test_parser_suffix(void) {
     static char *name = "ProcSuffix";
     Parser *p = alloc_parser(">> text.txt");
     SyntaxNode *node = proccess_suffix(p);
@@ -86,7 +85,7 @@ void test_parser_suffix() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_parser_prefix() {
+void test_parser_prefix(void) {
     static char *name = "ProcPrefix";
     Parser *p = alloc_parser("foo=bar");
     SyntaxNode *node = proccess_prefix(p);
@@ -104,7 +103,7 @@ void test_parser_prefix() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_parser_command() {
+void test_parser_command(void) {
     static char *name = "ProcCommand";
     Parser *p = alloc_parser("echo");
     SyntaxNode *node = proccess_command(p);
@@ -139,7 +138,7 @@ void test_parser_command() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_parser_pipe() {
+void test_parser_pipe(void) {
     static char *name = "ProcPipe";
     Parser *p = alloc_parser("echo hello | cat test.txt");
     SyntaxNode *node = proccess_pipline(p);
@@ -159,7 +158,7 @@ void test_parser_pipe() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_parser_statement() {
+void test_parser_statement(void) {
     static char *name = "ProcStatement";
     Parser *p = alloc_parser("mkdir test && cd ./test");
     SyntaxNode *node = proccess_statement(p);
@@ -180,7 +179,7 @@ void test_parser_statement() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_parser_script() {
+void test_parser_script(void) {
     static char *name = "ProcScript";
     Parser *p = alloc_parser("mkdir test ; cd ./test");
     SyntaxNode *node = proccess_script(p);

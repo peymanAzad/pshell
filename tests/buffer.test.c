@@ -1,4 +1,4 @@
-#include "../pshell.h"
+#include "pshell.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,7 +6,7 @@
 
 #define module "Buffer"
 
-void test_buff_alloc() {
+void test_buff_alloc(void) {
     static char *name = "init";
     Buffer *b = allocbuf();
     pushbuf(b, "hello world");
@@ -17,7 +17,7 @@ void test_buff_alloc() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_buffer_push() {
+void test_buffer_push(void) {
     static char *name = "pushbuff";
     Buffer *b = allocbuf();
     pushbuf(b, "hello world");
@@ -29,7 +29,7 @@ void test_buffer_push() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_buffer_pushc() {
+void test_buffer_pushc(void) {
     static char *name = "pushcbuff";
     Buffer *b = allocbuf();
     char *str = "hello world foo bar baz";
@@ -43,7 +43,7 @@ void test_buffer_pushc() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_buffer_strtok() {
+void test_buffer_strtok(void) {
     static char *name = "buffstrtok";
     char *str = "=hello=world=foo==";
     size_t cursor = 0;
@@ -64,7 +64,7 @@ void test_buffer_strtok() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_buffer_strtokspace() {
+void test_buffer_strtokspace(void) {
     static char *name = "buffstrtokspace";
     char *str = " hello  \t  world foo  ";
     size_t cursor = 0;
@@ -85,7 +85,7 @@ void test_buffer_strtokspace() {
     printf("%-10s/%-15s: test passed successfully.\n", module, name);
 }
 
-void test_buffer_slice() {
+void test_buffer_slice(void) {
     static char *name = "buffslice";
     char *str = " hello worldfoo  ";
     Buffer *b = initbuf(str);

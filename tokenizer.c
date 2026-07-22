@@ -8,6 +8,7 @@
 Token *alloc_token() {
     Token *t = (Token *)malloc(sizeof(Token));
     assert(t != NULL);
+    t->value = NULL;
     return t;
 }
 

@@ -1,6 +1,7 @@
 # pshell
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  
+
 A minimal, from-scratch shell interpreter for POSIX, written in C without any dependencies — no parser generators, no libreadline, no tutorial followed. Built layer by layer: tokenizer → recursive-descent parser → tree-walking interpreter. the project is meant to be an educational purpose for don't expect too much from it.
 
 ```

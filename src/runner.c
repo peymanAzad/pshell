@@ -64,8 +64,15 @@ int run_file(char *path) {
     char *str = malloc(size + 1);
     fread(str, 1, size, f);
     str[size] = '\0';
+    fclose(f);
 
-    int stat = eval(str);
+    char *content = str;
+    if (size > 2 && str[0] == '#' && str[1] == '!') {
+        char *newline = strchr(str, '\n');
+        content = newline != NULL ? newline + 1 : str + size;
+    }
+
+    int stat = eval(content);
     free(str);
     return stat;
 }

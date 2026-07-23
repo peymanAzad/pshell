@@ -1,5 +1,7 @@
 CC = gcc
-BASE_CFLAGS = -Wall -Wextra -std=c11 -pedantic -MMD -MP -D_POSIX_C_SOURCE=200809L -Iinclude
+VERSION := 0.1.0
+BASE_CFLAGS = -Wall -Wextra -std=c11 -pedantic -MMD -MP -D_POSIX_C_SOURCE=200809L -Iinclude -DPSHELL_VERSION=\"$(VERSION)\"
+
 
 DEBUG_CFLAGS = $(BASE_CFLAGS) -Werror -ggdb -O0 -DDEBUG -fsanitize=address,undefined
 RELEASE_CFLAGS = $(BASE_CFLAGS) -O2 -DNDEBUG -flto

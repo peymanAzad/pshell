@@ -1,6 +1,10 @@
 #ifndef P_SHELL_H
 #define P_SHELL_H
 
+#ifndef PSHELL_VERSION
+#define PSHELL_VERSION "dev"
+#endif
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
